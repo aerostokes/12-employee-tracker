@@ -20,6 +20,8 @@
   "homepage": "https://github.com/aerostokes/12-employee-tracker#readme",
   "dependencies": {
     "console.table": "^0.10.0",
-    "inquirer": "^8.2.4"
+    "dotenv": "^16.0.3",
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.2.4"
   }
 }
