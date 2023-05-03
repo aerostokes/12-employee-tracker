@@ -15,6 +15,10 @@ const db = mysql.createConnection(
 // On app start, run init()
 init();
 
+
+
+// Callback functions:
+
 // Welcome screen and run chooseAction()
 function init() {
     //ASCII art courtesy of http://patorjk.com/software/taag/
@@ -37,7 +41,7 @@ function init() {
 
 // Prompt user to choose an action
 function chooseAction () {
-    const actionArr = ["View All Departments", "View All Roles", "View All Employees", "Add a Department", "Add a Role", "Add an Employee", "Update an Employee's Role/Manager", "Exit"];
+    const actionArr = ["View All Departments", "View All Roles", "View All Employees", "View Utilized Budget", "Add a Department", "Add a Role", "Add an Employee", "Update an Employee's Role/Manager", "Exit"];
     inquirer.prompt({
         type: "list",
         name: "nextAction",
@@ -56,15 +60,18 @@ function chooseAction () {
                 viewEmployees();
                 break;
             case actionArr[3]:
-                addDepartment();
+                viewUtilizedBudget();
                 break;
             case actionArr[4]:
-                addRole();
+                addDepartment();
                 break;
             case actionArr[5]:
-                addEmployee();
+                addRole();
                 break;
             case actionArr[6]:
+                addEmployee();
+                break;
+            case actionArr[7]:
                 updateEmployeeRole();
                 break;
             default:
@@ -112,6 +119,18 @@ function viewEmployees() {
         chooseAction();
     });
 };
+
+// View all departments' utilized budget (ie. the combined salaries of all employees in that department)
+function viewUtilizedBudget() {
+    db.query(`SELECT departments.id, departments.name, SUM(salary) AS utilized_budget
+    FROM departments JOIN roles ON departments.id = roles.department_id
+    JOIN employees ON roles.id = employees.role_id
+    GROUP BY department_id;`, (err, results) => {
+        if (err) { console.log("\x1b[31m", "Error reading database") };
+        console.table("\x1b[36m", results);
+        chooseAction();
+    });
+}
 
 // Add a new Department
 function addDepartment() {
@@ -256,7 +275,6 @@ async function updateEmployeeRole() {
         chooseAction();
     };
 };
-
 
 // Display outro screen and exit
 function outro () {

@@ -30,3 +30,9 @@ DELETE FROM roles WHERE id = 8;
 DELETE FROM employees WHERE id = 8;
 
 
+SELECT departments.id, departments.name, SUM(salary) AS utilized_budget
+FROM departments JOIN roles ON departments.id = roles.department_id
+JOIN employees ON roles.id = employees.role_id
+GROUP BY department_id;
+
+SELECT roles.id, CONCAT(roles.title, ' ($', roles.salary, ')') AS name FROM roles LEFT JOIN departments ON department_id = departments.id ORDER BY department_id;
