@@ -1,3 +1,4 @@
+// Import and initialize packages, modules, and variables
 require("dotenv").config();
 require("console.table");
 const inquirer = require("inquirer");
@@ -11,10 +12,12 @@ const db = mysql.createConnection(
     }
 );
 
+// On app start, run init()
 init();
 
+// Welcome screen and run chooseAction()
 function init() {
-    //ASCII art curtesy of http://patorjk.com/software/taag/
+    //ASCII art courtesy of http://patorjk.com/software/taag/
     console.log(`
  __________________________________________________
 |     ______                __                     |
@@ -30,9 +33,9 @@ function init() {
 |__________________________________________________|                                                
     `);
     chooseAction();
-
 };
 
+// Prompt user to choose an action
 function chooseAction () {
     const actionArr = ["View All Departments", "View All Roles", "View All Employees", "Add a Department", "Add a Role", "Add an Employee", "Update an Employee's Role/Manager", "Exit"];
     inquirer.prompt({
@@ -73,6 +76,7 @@ function chooseAction () {
     });
 };
 
+// View all departments
 function viewDepartments() {
     db.query("SELECT * FROM departments;", (err, results) => {
         if (err) { console.log("\x1b[31m", "Error reading database") };
@@ -81,6 +85,7 @@ function viewDepartments() {
     });
 };
 
+// View all Roles
 function viewRoles() {
     db.query("SELECT roles.id, roles.title, departments.name AS department, roles.salary FROM roles LEFT JOIN departments ON department_id = departments.id; ", (err, results) => {
         if (err) { console.log("\x1b[31m", "Error reading database") };
@@ -89,6 +94,7 @@ function viewRoles() {
     });
 };
 
+// View all Employees
 function viewEmployees() {
     db.query(`SELECT employees.id, employees.first_name, employees.last_name, 
     employee_role.title AS role, departments.name AS department, employee_role.salary, 
@@ -107,6 +113,7 @@ function viewEmployees() {
     });
 };
 
+// Add a new Department
 function addDepartment() {
     inquirer.prompt({
         type: "input",
@@ -121,11 +128,11 @@ function addDepartment() {
     });
 };
 
+// Add a new Role, lookup departments for user to select from.
 async function addRole() {
     try {
         const departmentsPromise = await db.promise().query("SELECT * FROM departments");
         const departmentsArr = departmentsPromise[0];
-        console.log(departmentsArr);
         const responsesObj = await inquirer.prompt([
             {
                 type: "input",
@@ -158,6 +165,7 @@ async function addRole() {
     };
 };
 
+// Add a new Employee, look up roles and managers for user to select from. 
 async function addEmployee() {
     try {
         const rolesPromise = await db.promise().query("SELECT roles.id, CONCAT(departments.name, ' - ', roles.title) AS name FROM roles LEFT JOIN departments ON department_id = departments.id ORDER BY department_id;");
@@ -196,6 +204,7 @@ async function addEmployee() {
     };
 };
 
+// Update Employee with new role and/or manager, lookup employees, roles, and managers (from employees) for user to select from.  
 async function updateEmployeeRole() {
     try {
         const employeesPromise = await db.promise().query("SELECT employees.id, CONCAT(last_name, ', ', first_name, ' (', title, ')') AS name FROM employees LEFT JOIN roles ON role_id = roles.id ORDER BY last_name;");
@@ -239,7 +248,6 @@ async function updateEmployeeRole() {
         LEFT JOIN roles AS manager_role
         ON managers.role_id = manager_role.id
         WHERE employees.id = ?;`, employeeId, (err, results) => {
-            // if (err) { console.log("\x1b[31m", "Error reading database") };
             console.table("\x1b[36m", results);
             chooseAction();
         });
@@ -249,8 +257,10 @@ async function updateEmployeeRole() {
     };
 };
 
+
+// Display outro screen and exit
 function outro () {
-    //ASCII art curtesy of http://patorjk.com/software/taag/
+    //ASCII art courtesy of http://patorjk.com/software/taag/
     console.log(`
      ______                ____             
     / ____/___  ____  ____/ / /_  __  _____ 

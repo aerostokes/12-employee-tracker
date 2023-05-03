@@ -1,3 +1,4 @@
+-- Seed data for dev
 USE company_db;
 
 INSERT INTO departments(name)
@@ -26,5 +27,5 @@ VALUES
 ("Snorkeldink", "Frumblesnatch",3,2),
 ("Wimbledon", "Tennismatch", 2, 5),
 ("Brendadirk", "Ampersand",1, 5);
--- Seed names curtesy of https://benedictcumberbatchgenerator.tumblr.com
+-- Seed names courtesy of https://benedictcumberbatchgenerator.tumblr.com
 

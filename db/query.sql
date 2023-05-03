@@ -1,4 +1,4 @@
--- Active: 1682615646290@@127.0.0.1@3306@company_db
+-- Queries used during dev 
 USE company_db; 
 SELECT * FROM departments; 
 SELECT roles.id, roles.title, departments.name AS department, roles.salary 
@@ -27,7 +27,6 @@ UPDATE employees SET role_id = 2, manager_id = 4 WHERE id = 7;
 
 DELETE FROM departments WHERE id = 5;
 DELETE FROM roles WHERE id = 8;
-
 DELETE FROM employees WHERE id = 8;
 
 
